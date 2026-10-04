@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hnsw-engine"
+version = "0.1.0"
+description = "HNSW approximate nearest neighbor search built from first principles, benchmarked against FAISS"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "numpy>=2.0,<3",
+    "numba>=0.60,<0.70",
+    "h5py>=3.10,<4",
+]
+
+[project.optional-dependencies]
+bench = [
+    "faiss-cpu>=1.8,<2",
+    "hnswlib>=0.8,<0.9",
+    "matplotlib>=3.8,<4",
+    "psutil>=5.9,<8",
+    "threadpoolctl>=3.2,<4",
+]
+dev = [
+    "pytest>=8,<10",
+    "hypothesis>=6.100,<7",
+    "ruff>=0.16,<0.17",
+    "mypy>=2.0,<3",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+hnsw_engine = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "slow: tests that take more than a few seconds",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests", "benchmarks"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "C4", "RUF", "NPY", "PT", "PERF", "PIE", "RET"]
+ignore = [
+    "PERF203",  # try/except in a loop is intentional where used
+    "RET504",   # assigning before return often reads better in numeric code
+]
+
+[tool.ruff.lint.isort]
+known-local-folder = ["helpers"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["PERF401"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = ["numba.*", "h5py.*", "faiss.*", "hnswlib.*", "psutil.*", "threadpoolctl.*"]
+ignore_missing_imports = true
