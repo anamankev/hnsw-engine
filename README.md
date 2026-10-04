@@ -1,5 +1,7 @@
 # hnsw-engine
 
+[![ci](https://github.com/anamankev/hnsw-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/anamankev/hnsw-engine/actions/workflows/ci.yml)
+
 **A vector search engine built from first principles.** Hierarchical Navigable Small World (HNSW)
 graphs, the approximate nearest neighbour algorithm inside most vector databases, implemented
 from the original paper (Malkov & Yashunin, 2016) twice: a readable pure-Python reference that
@@ -11,6 +13,9 @@ compiled engine runs within 1.1-1.5x of hnswlib's throughput at recall 0.95 and 
 FAISS, and every gap is measured and explained. On the full SIFT 1M it answers 4,447 queries/s at
 recall 0.95 on one thread, 39x faster than exact search. Extensions: filtered search with
 metadata predicates, int8 scalar quantization, and memory-mapped index files.
+
+It also serves the candidate retrieval of
+[two-stage-recsys](https://github.com/anamankev/two-stage-recsys), a two-stage movie recommender.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/figures/sift100k_recall_qps_dark.png">
@@ -106,8 +111,12 @@ flowchart LR
 ## Quick start
 
 ```bash
+git clone https://github.com/anamankev/hnsw-engine.git
 uv venv --python 3.12 .venv && uv pip install -e "hnsw-engine[bench,dev]"
+cd hnsw-engine && make check
 ```
+
+The Makefile expects the environment next to the clone (`../.venv`); pass `PY=...` to use another.
 
 ```python
 import numpy as np
